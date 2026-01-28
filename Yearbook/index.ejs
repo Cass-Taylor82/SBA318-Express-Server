@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025-2026 Yearbook RTT-12</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Per Scholas Yearbook <br>
+        Class of 2025-2026</h1>
+        <div class="student-grid">
+            <% students.forEach(student => { %>
+            <div class="student-card">
+                <a href="/profile/<%= student.id %>">
+                    <img src="'<%= student.photo %>" alt="<%= student.name %>">
+                    <h3><%= student.name %></h3>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</body>
+</html>

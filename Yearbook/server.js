@@ -43,17 +43,23 @@ app.post('/profile/:id/message', (req, res) => {
     const studentId = parseInt(req.params.id);
     const student = students.find(s => s.id === studentId);
 
+    if (student) {
+        if (!student.messages) student.messages = [];
+        student.messages.push({
+            author: req.body.author,
+            text: req.body.message,
+            date: new Date()
+        });
+
+        // Saving
+        fs.writeFilesSync('./data/students.json', JSON.stringify(students, null, 2));
+        res.redirect('/profile/${studentId}');
+    } else {
+        res.status(404).send('Student not found');
     }
-})
-app.listen(PORT, () => {
-    console.log('Server in running on http://localhost:{PORT}');
 });
 
-// connecting to the database
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/Yearbook_db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB...', err));
+app.listen(PORT, () => {
+    console.log('Yearbook app running on http://localhost:{PORT}');
+});
+
