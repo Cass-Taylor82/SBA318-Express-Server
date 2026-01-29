@@ -7,23 +7,65 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bycrpt');
 
+// Creating express instance
 const app = express();
-const PORT = 3000;
+const PORT =  process.env.PORT || 3000;
 
-//Middleware
+//Getting Multer set up
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/upload/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() *1E9);
+        cb(null, uniqueSuffix + path.extreme(file.originalname));
+    }
+});
+
+// So that code will only take image files
+const fileFilter = (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png|gif/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb(new Error('Only image files are allowed!'));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: fileFilter
+});
+
+// Middleware
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'yearbook-secret-key',
+    secret: 'yearbook-secret-key-change-in-production',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    }
 }));
 
+//making ejs a template engine for html
 app.set('view engine', 'ejs');
 
-let students = require('./data/students.json');
+// since I don't have a data directory of students
+if (!fs.existsSync('./data')) {
+    fs.mkdirSync('./data');
+}
+
+let studentsDataPath = './data/students.json';
+let students = [];
 
 //Routes
 app.get('/', (req, res) => {

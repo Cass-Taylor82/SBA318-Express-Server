@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= student.name %> Profile
+    </title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="" back-link"> Back to Yearbook</a>
+
+        <div class="profile">
+            <img src="<%= student.photo %>" alt="<%= student.name %>">
+            <h1>
+                <%= student.name %>
+            </h1>
+            <p class="quote">"<%= student.quote %>"</p>
+
+            <div class="favorite moments">
+                <h3>Favorite Moments</h3>
+                <ul>
+                    <% student.favorite moments.forEach(favorite moment=> { %>
+                        <li>
+                            <%= favorite moment %>
+                        </li>
+                        <% }); %>
+                </ul>
+            </div>
+            <div class="messages-section">
+                <h3>Messages</h3>
+                <% if (student.messages && student.messages.length> 0) { %>
+                    <% student.messages.forEach(msg=> { %>
+                        <div class="message">
+                            <strong>
+                                <%= msg.author %>:
+                            </strong>
+                            <p>
+                                <%= msg.text %>
+                            </p>
+                        </div>
+                        <% }); %>
+                            <% } %>
+            </div>
+            <div class="quotes-section">
+                <h3>Quotes</h3>
+                <% if (student.quotes && student.quotes.length> 0) { %>
+                    <% student.quotes.forEach(msg=> { %>
+                        <div class="quote">
+                            <strong>
+                                <%= msg.author %>:
+                            </strong>
+                            <p>
+                                <%= msg.text %>
+                            </p>
+                        </div>
+                        <% }); %>
+                            <% } %>
+                            <form method="POST" action="/profile/<%= student.id %>/message">
+                                <input type="text" name="author" placeholder="Name" required>
+                                <textarea name="favorite moment" placeholder="Favorite Moment" required></textarea>
+                                <textarea name="message" placeholder="Message" required></textarea>
+                                <textarea name="quotes" placeholder="Quote" required></textarea>
+                                <button type="submit">Sign Yearbook</button>
+                            </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
